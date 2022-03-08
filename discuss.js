@@ -13,7 +13,7 @@ var commentHolder = document.getElementById('commentHolder');
 var pickName = document.getElementById('pickName');
 var pickComment = document.getElementById('pickComment');
 var commentBtn = document.getElementById('commentBtn');
-var rightInputFlag = true;
+// var rightInputFlag = true;
 
 takeInput.addEventListener('click',()=>{
     rightInputFlag == true
@@ -21,6 +21,7 @@ takeInput.addEventListener('click',()=>{
     console.log('button works')
     }
 )
+
 //renders existing questions upon reload
 renderQuestions();
 function renderQuestions(){
@@ -35,7 +36,9 @@ submit.addEventListener('click',addtoDatalist)
 function addtoDatalist (){   
     const container = {
         sub: subject.value,
-        ques: question.value
+        ques: question.value,
+        id: new Date().getUTCMilliseconds(),
+        responses: []
     };
     addtoLocalStorage(container);
     createQuestion(container);
@@ -50,6 +53,7 @@ function createQuestion(container){
         box.setAttribute("id","box");
         box.appendChild(head);
         box.appendChild(bod);
+        box.setAttribute('key',container.id)
         datalist.appendChild(box);
     box.addEventListener('click',onquesClick(container))
 }
@@ -57,14 +61,61 @@ function onquesClick(container){
     return function(){       
         rightInputFlag = false;
         toggleRight();
-        displayDetails(container);
+        displayDetails(container);       
+        fetchResponses(container.id);
+        commentBtn.addEventListener('click',saveResponse(container.id))
     }
 }
 function displayDetails(container){
-    var title = document.createElement('div');
+    respondQue.innerHTML = '';
+    var heading = document.createElement('h3');
+    heading.innerHTML = 'Question'
+    var title = document.createElement('h4');
     title.innerHTML = container.sub;
+    var desc = document.createElement('h5')
+    desc.innerHTML = container.ques;
+    respondQue.appendChild(heading)
     respondQue.appendChild(title);
+    respondQue.appendChild(desc);
 
+}
+function saveResponse(genId){
+    return ()=>{
+        const res = {
+            name: pickName.value,
+            comment: pickComment.value
+        }
+        var arr = getFromLocalStorage();
+        console.log(genId);
+        arr.forEach((data)=>{
+            if(data.id == genId){
+                data.responses.push(res);
+            }
+        })
+        localStorage.setItem('data',JSON.stringify(arr));
+        fetchResponses(genId);
+    }
+}
+function fetchResponses(genid){
+    respondAns.innerHTML = '';
+    respondAns.innerHTML = 'Responses';
+    var arr = getFromLocalStorage();
+    arr.forEach((data)=>{
+        if(data.id == genid)
+        {
+            data.responses.forEach((coms)=>{               
+                var r = document.createElement('div');
+                var head = document.createElement('h4');
+                var body = document.createElement('h5');
+                r.setAttribute('id','box');
+                head.innerHTML = coms.name;
+                body.innerHTML = coms.comment;
+                r.appendChild(head)
+                r.appendChild(body)
+                respondAns.appendChild(r);
+            })
+        }
+    })
 }
 function toggleRight(){
     if(rightInputFlag == true)
@@ -94,11 +145,9 @@ function toggleRight(){
     
 }
 function addtoLocalStorage(obj){
-    
     var data = getFromLocalStorage();
     data.push(obj);
-    localStorage.setItem('data',JSON.stringify(data));
-    
+    localStorage.setItem('data',JSON.stringify(data));  
 }
 //returns an array,empty or filled with data
 function getFromLocalStorage(){

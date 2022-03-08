@@ -28,7 +28,6 @@ padding-bottom: 15px;
 padding-left: 5px;
 font-size: 3vw;
 }
-
 .container
 {
 display: flex;
@@ -40,7 +39,7 @@ height: 30vw;
 width: 50%;
 height: 100%;
 border: 1px whitesmoke solid;
-padding: 2%;
+padding: 1%;
 /* overflow: scroll; */
 }
 
@@ -60,12 +59,12 @@ padding:5px;
 
 #dataList
 {
-overflow: auto;
+overflow: scroll;
 height: 60vh;
 }
 #box
 {
-background-color: slategray;
+background-color: rgb(180, 185, 189);
 }
 
 #rightDiv
@@ -106,7 +105,7 @@ text-align: left;
 
 #pickComment
 {
-height: 22vh;
+height: 15vh;
 width: 45vw;
 margin-top: 2px;
 }
@@ -118,12 +117,17 @@ float: right;
 color: white;
 padding: 6px;
 border-radius: 7px;
+margin-right: 10px;
 }
-
+#respondQue
+{
+    height: auto;
+    background-color: aliceblue;
+}
 #respondAns
 {
 overflow: auto;
-height: 15vh;
+height: 30vh;
 margin-bottom: 1vh;
 }
 
@@ -137,8 +141,15 @@ margin-left: 20px;
 #resolveHolder
 {
 display: block;
-height: 7vh;
-margin-bottom: 2vh;
+height: auto;
+margin-bottom: auto;
+}
+#resolveQuestion
+{
+    position: block;
+    margin-left: auto;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 
