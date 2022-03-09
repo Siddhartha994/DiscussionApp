@@ -13,15 +13,29 @@ var commentHolder = document.getElementById('commentHolder');
 var pickName = document.getElementById('pickName');
 var pickComment = document.getElementById('pickComment');
 var commentBtn = document.getElementById('commentBtn');
-// var rightInputFlag = true;
 
+//newQuestionForm button
 takeInput.addEventListener('click',()=>{
     rightInputFlag == true
     toggleRight();
     console.log('button works')
     }
 )
-
+//get id of container
+datalist.addEventListener('click',(event)=>{
+        var name = event.target.getAttribute('name');
+        var key
+        if(name == 'text')
+            key = event.target.parentElement.getAttribute('key');
+        else 
+            key = event.target.getAttribute('key');        
+        rightInputFlag = false;
+        toggleRight();
+        // displayDetails(container.id);       
+        fetchResponses(key);
+        commentBtn.addEventListener('click',saveResponse(key))
+    
+})
 //renders existing questions upon reload
 renderQuestions();
 function renderQuestions(){
@@ -48,6 +62,8 @@ function createQuestion(container){
     var box = document.createElement('div');
         var head = document.createElement('h2');
         var bod = document.createElement('h4');
+        head.setAttribute('name','text');
+        bod.setAttribute('name','text');
         head.innerHTML = container.sub;
         bod.innerHTML = container.ques;
         box.setAttribute("id","box");
@@ -55,17 +71,11 @@ function createQuestion(container){
         box.appendChild(bod);
         box.setAttribute('key',container.id)
         datalist.appendChild(box);
-    box.addEventListener('click',onquesClick(container))
 }
-function onquesClick(container){
-    return function(){       
-        rightInputFlag = false;
-        toggleRight();
-        displayDetails(container);       
-        fetchResponses(container.id);
-        commentBtn.addEventListener('click',saveResponse(container.id))
-    }
-}
+//flag
+// function onquesClick(container){
+//     return function()
+// }
 function displayDetails(container){
     respondQue.innerHTML = '';
     var heading = document.createElement('h3');
@@ -80,11 +90,12 @@ function displayDetails(container){
 
 }
 function saveResponse(genId){
-    return ()=>{
+    return (event)=>{
         const res = {
             name: pickName.value,
             comment: pickComment.value
         }
+        console.log(event.target.parentElement)
         var arr = getFromLocalStorage();
         console.log(genId);
         arr.forEach((data)=>{
