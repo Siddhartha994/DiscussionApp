@@ -3,7 +3,9 @@ var question = document.getElementById('question');
 var submit = document.getElementById('submitBtn');
 var datalist = document.getElementById('dataList');
 var rightInputContainer = document.getElementById('toggleDisplay');
-var takeInput = document.getElementById('newQuestionForm');
+var newQuestionForm = document.getElementById('newQuestionForm');
+var questionSearch = document.getElementById('questionSearch');
+
 //question Details
 var respondQue = document.getElementById('respondQue');
 var resolveHolder = document.getElementById('resolveHolder');
@@ -16,7 +18,7 @@ var pickComment = document.getElementById('pickComment');
 var commentBtn = document.getElementById('commentBtn');
 var rightInputFlag = true;
 //newQuestionForm button
-takeInput.addEventListener('click',()=>{
+newQuestionForm.addEventListener('click',()=>{
     rightInputFlag == true
     toggleRight();
     }
@@ -35,14 +37,33 @@ datalist.addEventListener('click',(event)=>{
         fetchResponses(key);
         commentBtn.onclick = saveResponse(key);
 })
+questionSearch.addEventListener('keyup',(event)=>{
+    var query = event.target.value;
+    var arr = getFromLocalStorage();
+    if(query){
+        datalist.innerHTML = ''
+        arr = arr.filter((data)=>{
+            return data.sub.includes(query);
+        })
+        renderQuestions(arr);
+    }
+    else{
+        datalist.innerHTML = ''
+        renderQuestions();
+    }
+})
 //renders existing questions upon reload
 renderQuestions();
-function renderQuestions(){
-    var data = getFromLocalStorage();
-    
+function renderQuestions(arr){
+    var data;
+    if(arr)
+        data = arr;
+    else 
+        data = getFromLocalStorage();
     data.forEach(function(data){
         createQuestion(data);
     });
+
 }
 //submit question
 submit.addEventListener('click',addtoDatalist)

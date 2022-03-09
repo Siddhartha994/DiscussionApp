@@ -34,7 +34,8 @@ font-size: 3vw;
 .container
 {
 display: flex;
-height: 30vw;
+height: auto;
+width: auto;
 }
 
 .twoBox
@@ -45,6 +46,8 @@ border: 1px whitesmoke solid;
 padding: 1%;
 margin-right: 5%;
 margin-left: 5%;
+margin-top: 2%;
+margin-bottom: 2%;
 background-color: antiquewhite;
 /* overflow: scroll; */
 }
