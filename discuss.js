@@ -9,16 +9,16 @@ var respondQue = document.getElementById('respondQue');
 var resolveHolder = document.getElementById('resolveHolder');
 var resolveQuestion = document.getElementById('resolveQuestion');
 var respondAns = document.getElementById('respondAns');
+var outside = document.getElementById('outside');
 var commentHolder = document.getElementById('commentHolder');
 var pickName = document.getElementById('pickName');
 var pickComment = document.getElementById('pickComment');
 var commentBtn = document.getElementById('commentBtn');
-
+var rightInputFlag = true;
 //newQuestionForm button
 takeInput.addEventListener('click',()=>{
     rightInputFlag == true
     toggleRight();
-    console.log('button works')
     }
 )
 //get id of container
@@ -33,8 +33,7 @@ datalist.addEventListener('click',(event)=>{
         toggleRight();
         // displayDetails(container.id);       
         fetchResponses(key);
-        commentBtn.addEventListener('click',saveResponse(key))
-    
+        commentBtn.onclick = saveResponse(key);
 })
 //renders existing questions upon reload
 renderQuestions();
@@ -71,23 +70,21 @@ function createQuestion(container){
         box.appendChild(bod);
         box.setAttribute('key',container.id)
         datalist.appendChild(box);
+        box.addEventListener('click',displayDetails(container));
 }
-//flag
-// function onquesClick(container){
-//     return function()
-// }
 function displayDetails(container){
-    respondQue.innerHTML = '';
-    var heading = document.createElement('h3');
-    heading.innerHTML = 'Question'
-    var title = document.createElement('h4');
-    title.innerHTML = container.sub;
-    var desc = document.createElement('h5')
-    desc.innerHTML = container.ques;
-    respondQue.appendChild(heading)
-    respondQue.appendChild(title);
-    respondQue.appendChild(desc);
-
+    return ()=>{
+        respondQue.innerHTML = '';
+        var heading = document.createElement('h3');
+        heading.innerHTML = 'Question'
+        var title = document.createElement('h4');
+        title.innerHTML = container.sub;
+        var desc = document.createElement('h5')
+        desc.innerHTML = container.ques;
+        respondQue.appendChild(heading)
+        respondQue.appendChild(title);
+        respondQue.appendChild(desc);
+    }
 }
 function saveResponse(genId){
     return (event)=>{
@@ -95,9 +92,7 @@ function saveResponse(genId){
             name: pickName.value,
             comment: pickComment.value
         }
-        console.log(event.target.parentElement)
         var arr = getFromLocalStorage();
-        console.log(genId);
         arr.forEach((data)=>{
             if(data.id == genId){
                 data.responses.push(res);
@@ -109,7 +104,6 @@ function saveResponse(genId){
 }
 function fetchResponses(genid){
     respondAns.innerHTML = '';
-    respondAns.innerHTML = 'Responses';
     var arr = getFromLocalStorage();
     arr.forEach((data)=>{
         if(data.id == genid)
@@ -137,6 +131,7 @@ function toggleRight(){
         respondQue.style.display = "none";
         resolveHolder.style.display = "none";
         respondAns.style.display = "none";
+        outside.style.display = "none";
         resolveQuestion.style.display = "none";
         commentHolder.style.display = "none";
         commentBtn.style.display = "none";
@@ -147,6 +142,7 @@ function toggleRight(){
         respondQue.style.display = "block";
         resolveHolder.style.display = "block";
         respondAns.style.display = "block";
+        outside.style.display = "block";
         resolveQuestion.style.display = "block";
         commentHolder.style.display = "block";
         commentBtn.style.display = "block";

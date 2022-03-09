@@ -3,7 +3,10 @@
 background-color: rgb(248, 163, 51);
 font-family: sans-serif;
 } */
-
+#firstHead
+{
+    text-align: center;
+}
 h1
 {
 font-size: 2vw;
@@ -36,10 +39,13 @@ height: 30vw;
 
 .twoBox
 {
-width: 50%;
-height: 100%;
+width: 40%;
+height: fit-content;
 border: 1px whitesmoke solid;
 padding: 1%;
+margin-right: 5%;
+margin-left: 5%;
+background-color: antiquewhite;
 /* overflow: scroll; */
 }
 
@@ -81,7 +87,7 @@ width: 10vw;
 #question
 {
 height: 22vh;
-width: 45vw;
+width: 35vw;
 }
 
 #submitBtn
@@ -105,9 +111,10 @@ text-align: left;
 
 #pickComment
 {
-height: 15vh;
-width: 45vw;
+height: 10vh;
+width: 30vw;
 margin-top: 2px;
+margin-right: 10px;
 }
 
 #commentBtn
