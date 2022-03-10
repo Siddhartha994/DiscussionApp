@@ -5,6 +5,8 @@ var datalist = document.getElementById('dataList');
 var rightInputContainer = document.getElementById('toggleDisplay');
 var newQuestionForm = document.getElementById('newQuestionForm');
 var questionSearch = document.getElementById('questionSearch');
+var upv = document.getElementById('upvote');
+var dwv = document.getElementById('downvote');
 
 //question Details
 var respondQue = document.getElementById('respondQue');
@@ -37,15 +39,25 @@ datalist.addEventListener('click',(event)=>{
         fetchResponses(key);
         commentBtn.onclick = saveResponse(key);
 })
-questionSearch.addEventListener('keyup',(event)=>{
+//search
+questionSearch.addEventListener("keyup",(event)=>{
     var query = event.target.value;
     var arr = getFromLocalStorage();
+    var temparr;
     if(query){
         datalist.innerHTML = ''
-        arr = arr.filter((data)=>{
+        temparr = arr.filter((data)=>{
             return data.sub.includes(query);
         })
-        renderQuestions(arr);
+        if(temparr.length)
+            renderQuestions(temparr);
+        else    
+            {
+                var nmf = document.createElement('h2');
+                nmf.innerHTML = 'No Match Found';
+                toggleRight();
+                datalist.appendChild(nmf);
+            }
     }
     else{
         datalist.innerHTML = ''
@@ -55,11 +67,15 @@ questionSearch.addEventListener('keyup',(event)=>{
 //renders existing questions upon reload
 renderQuestions();
 function renderQuestions(arr){
+    datalist.innerHTML = '';
     var data;
     if(arr)
         data = arr;
     else 
         data = getFromLocalStorage();
+    data.sort((a,b) =>{
+        return b.upvote - (a.upvote)
+    })
     data.forEach(function(data){
         createQuestion(data);
     });
@@ -68,27 +84,41 @@ function renderQuestions(arr){
 //submit question
 submit.addEventListener('click',addtoDatalist)
 function addtoDatalist (){   
-    const container = {
+    if(subject.value && question.value){
+        const container = {
         sub: subject.value,
         ques: question.value,
         id: new Date().getUTCMilliseconds(),
-        responses: []
+        responses: [],
+        upvote: 0,
+        downvote: 0 
     };
     addtoLocalStorage(container);
     createQuestion(container);
+    }
+    else    
+        alert('Insert Subject and Description');
 }
 //creates a box for individual question
 function createQuestion(container){
     var box = document.createElement('div');
         var head = document.createElement('h2');
         var bod = document.createElement('h4');
+        var up = document.createElement('button');
+        var down = document.createElement('button');
         head.setAttribute('name','text');
         bod.setAttribute('name','text');
         head.innerHTML = container.sub;
         bod.innerHTML = container.ques;
+        up.innerHTML = container.upvote;
+        down.innerHTML = container.downvote;
         box.setAttribute("id","box");
+        up.setAttribute("id","dispupvote");
+        down.setAttribute("id","dispdownvote");
         box.appendChild(head);
         box.appendChild(bod);
+        box.appendChild(up);
+        box.appendChild(down);
         box.setAttribute('key',container.id)
         datalist.appendChild(box);
         box.addEventListener('click',displayDetails(container));
@@ -105,6 +135,26 @@ function displayDetails(container){
         respondQue.appendChild(heading)
         respondQue.appendChild(title);
         respondQue.appendChild(desc);
+        upv.onclick = ()=>{
+            container.upvote++;
+            updateVote(container);
+            renderQuestions();
+        }
+        dwv.onclick = ()=>{
+            container.downvote++;
+            updateVote(container);
+            renderQuestions();
+        }
+        resolveQuestion.onclick = deleteContainer(container.id);
+    }
+}
+function deleteContainer(id){
+    return ()=>{
+        var arr = getFromLocalStorage();
+        arr = arr.filter((data)=> data.id != id);
+    localStorage.setItem('data',JSON.stringify(arr));
+    renderQuestions();
+    toggleRight();
     }
 }
 function saveResponse(genId){
@@ -172,10 +222,21 @@ function toggleRight(){
     }
     
 }
+function updateVote(obj){
+    var data = getFromLocalStorage();
+    data.forEach((container)=>{
+        if(container.id == obj.id){
+            container.upvote = obj.upvote;
+            container.downvote = obj.downvote
+        }
+    })
+    localStorage.setItem('data',JSON.stringify(data));
+}
 function addtoLocalStorage(obj){
     var data = getFromLocalStorage();
     data.push(obj);
     localStorage.setItem('data',JSON.stringify(data));  
+    
 }
 //returns an array,empty or filled with data
 function getFromLocalStorage(){

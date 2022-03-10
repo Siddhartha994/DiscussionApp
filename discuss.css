@@ -154,15 +154,35 @@ display: block;
 height: auto;
 margin-bottom: auto;
 }
+#upvote{
+    background-color: green;
+    color: rgb(243, 223, 186);
+    margin-left: 10px;
+    margin-right: 10px;
+}
+#downvote{
+    background-color: red;
+    color: rgb(243, 223, 186);
+}
+#dispupvote{
+    justify-items: right;
+    background-color: green;
+    color: rgb(243, 223, 186);
+}
+#dispdownvote{
+    justify-items: right;
+    background-color: red;
+    color: rgb(243, 223, 186);
+}
 #resolveQuestion
-{
+{   
+    background-color: royalblue;
+    color: aliceblue;
+    border-radius: 5px;
     position: block;
     margin-left: auto;
     margin-right: 10px;
-    margin-bottom: 10px;
 }
-
-
 #resolveBtn
 {
 background-color: #0069d9;
