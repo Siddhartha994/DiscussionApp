@@ -27,17 +27,17 @@ newQuestionForm.addEventListener('click',()=>{
 )
 //get id of container
 datalist.addEventListener('click',(event)=>{
-        var name = event.target.getAttribute('name');
-        var key
-        if(name == 'text')
-            key = event.target.parentElement.getAttribute('key');
-        else 
-            key = event.target.getAttribute('key');        
-        rightInputFlag = false;
-        toggleRight();
-        // displayDetails(container.id);       
-        fetchResponses(key);
-        commentBtn.onclick = saveResponse(key);
+    var key
+    var name = event.target.getAttribute('name');
+    if(name == 'text')
+        key = event.target.parentElement.getAttribute('key');
+        
+    else 
+        key = event.target.getAttribute('key');        
+    rightInputFlag = false;
+    toggleRight();
+    fetchResponses(key);
+    commentBtn.onclick = saveResponse(key);
 })
 //search
 questionSearch.addEventListener("keyup",(event)=>{
@@ -63,6 +63,44 @@ questionSearch.addEventListener("keyup",(event)=>{
         datalist.innerHTML = ''
         renderQuestions();
     }
+})
+//vote on response
+respondAns.addEventListener('click',(event)=>{
+    var key;
+    var reskey;
+    if( event.target.className == 'dispupvote'){
+        key = event.target.parentElement.getAttribute('key');
+        var res = {
+            name: event.target.previousElementSibling.previousElementSibling.innerHTML,
+            comment: event.target.previousElementSibling.innerHTML,
+            id: key,
+            upvote: parseInt(++event.target.innerHTML),
+            downvote: event.target.nextElementSibling.innerHTML
+        }
+    }
+    else if( event.target.className == 'dispdownvote'){
+        key = event.target.parentElement.getAttribute('key');
+        var res = {
+            name: event.target.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML,
+            comment: event.target.previousElementSibling.previousElementSibling.innerHTML,
+            id: key,
+            upvote: event.target.previousElementSibling.innerHTML,
+            downvote: parseInt(++event.target.innerHTML)
+        }
+    }
+    var arr = getFromLocalStorage();
+    for(var i = 0; i< arr.length;i++){
+        for(var j = 0; j < arr[i].responses.length;j++){
+            if(arr[i].responses[j].id == key){
+                arr[i].responses[j] = res;
+            }
+        }
+        arr[i].responses.sort((a,b) =>{
+            return b.upvote - (parseInt(a.upvote))
+        })  
+    }
+    
+    localStorage.setItem('data',JSON.stringify(arr));    
 })
 //renders existing questions upon reload
 renderQuestions();
@@ -91,7 +129,8 @@ function addtoDatalist (){
         id: new Date().getUTCMilliseconds(),
         responses: [],
         upvote: 0,
-        downvote: 0 
+        downvote: 0,
+        favorite: false
     };
     addtoLocalStorage(container);
     createQuestion(container);
@@ -106,19 +145,28 @@ function createQuestion(container){
         var bod = document.createElement('h4');
         var up = document.createElement('button');
         var down = document.createElement('button');
+        var fav = document.createElement('input');
         head.setAttribute('name','text');
         bod.setAttribute('name','text');
+        fav.setAttribute('type','checkbox');
+        fav.setAttribute('id','fav');
+        fav.setAttribute('on','false');
+        if(container.favorite)
+            fav.setAttribute('on','true');
+
         head.innerHTML = container.sub;
         bod.innerHTML = container.ques;
         up.innerHTML = container.upvote;
         down.innerHTML = container.downvote;
+        fav.innerHTML = 'fav';
         box.setAttribute("id","box");
-        up.setAttribute("id","dispupvote");
-        down.setAttribute("id","dispdownvote");
+        up.setAttribute("class","dispupvote");
+        down.setAttribute("class","dispdownvote");
         box.appendChild(head);
         box.appendChild(bod);
         box.appendChild(up);
         box.appendChild(down);
+        box.appendChild(fav);
         box.setAttribute('key',container.id)
         datalist.appendChild(box);
         box.addEventListener('click',displayDetails(container));
@@ -158,10 +206,13 @@ function deleteContainer(id){
     }
 }
 function saveResponse(genId){
-    return (event)=>{
-        const res = {
+    return ()=>{
+        var res = {
             name: pickName.value,
-            comment: pickComment.value
+            comment: pickComment.value,
+            id: new Date().getUTCMilliseconds(),
+            upvote: 0,
+            downvote: 0
         }
         var arr = getFromLocalStorage();
         arr.forEach((data)=>{
@@ -176,18 +227,30 @@ function saveResponse(genId){
 function fetchResponses(genid){
     respondAns.innerHTML = '';
     var arr = getFromLocalStorage();
+    
     arr.forEach((data)=>{
+        
         if(data.id == genid)
         {
-            data.responses.forEach((coms)=>{               
+            data.responses.forEach((coms)=>{    
+                        
                 var r = document.createElement('div');
                 var head = document.createElement('h4');
                 var body = document.createElement('h5');
+                var up = document.createElement('button');
+                var down = document.createElement('button');
                 r.setAttribute('id','box');
+                r.setAttribute('key',coms.id);
+                up.setAttribute('class','dispupvote');
+                down.setAttribute('class','dispdownvote');
                 head.innerHTML = coms.name;
                 body.innerHTML = coms.comment;
+                up.innerHTML =  coms.upvote ;
+                down.innerHTML = coms.downvote ;
                 r.appendChild(head)
                 r.appendChild(body)
+                r.appendChild(up)
+                r.appendChild(down)
                 respondAns.appendChild(r);
             })
         }
