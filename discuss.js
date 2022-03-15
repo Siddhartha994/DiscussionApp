@@ -130,7 +130,7 @@ function addtoDatalist (){
         const container = {
         sub: subject.value,
         ques: question.value,
-        id: new Date().getUTCMilliseconds(),
+        id: new Date().getTime(),
         responses: [],
         upvote: 0,
         downvote: 0,
@@ -150,27 +150,57 @@ function createQuestion(container){
         var up = document.createElement('button');
         var down = document.createElement('button');
         var fav = document.createElement('input');
+        var log = document.createElement('p');
+        
+        box.setAttribute('key',container.id)
+        box.setAttribute("id","box");
         head.setAttribute('name','text');
         bod.setAttribute('name','text');
         fav.setAttribute('type','checkbox');
+        up.setAttribute("class","dispupvote");
+        down.setAttribute("class","dispdownvote");
         if(container.favorite)
             fav.setAttribute('checked','checked');
+
         head.innerHTML = container.sub;
         bod.innerHTML = container.ques;
         up.innerHTML = container.upvote;
         down.innerHTML = container.downvote;
-        box.setAttribute("id","box");
-        up.setAttribute("class","dispupvote");
-        down.setAttribute("class","dispdownvote");
+        setInterval(()=>{
+            log.innerHTML = `Created ${timeLapsed(container.id)} ago `;
+        },1000)
+
         box.appendChild(head);
         box.appendChild(bod);
         box.appendChild(up);
         box.appendChild(down);
         box.appendChild(fav);
-        box.setAttribute('key',container.id)
+        box.appendChild(log);
         datalist.appendChild(box);
+
         box.addEventListener('click',displayDetails(container));
-        fav.addEventListener('click', addtoFav(container))
+        fav.addEventListener('click', addtoFav(container));
+}
+function timeLapsed(creationTime){
+    var timeLapsed = Date.now() - new Date(creationTime).getTime();
+
+    var secondsDiff = parseInt(timeLapsed / 1000 );
+    var minutesDiff = parseInt(secondsDiff / 60);
+    var hourDiff = parseInt(minutesDiff / 60 );
+
+    if(secondsDiff >= 60) {
+        secondsDiff %= 60;
+        if(minutesDiff >= 60)
+            minutesDiff %= 60;
+    }
+    if(minutesDiff === 0)
+        return secondsDiff + " seconds";
+    else if (hourDiff === 0)
+        return minutesDiff + " minutes";
+    else if (hourDiff < 24)
+        return hourDiff +" hours";
+    else
+        return parseInt(hourDiff/24) + " days";
 }
 function addtoFav(container){
     return ()=>{
