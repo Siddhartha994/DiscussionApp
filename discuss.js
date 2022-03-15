@@ -114,6 +114,10 @@ function renderQuestions(arr){
     data.sort((a,b) =>{
         return b.upvote - (a.upvote)
     })
+    data.sort((a,b) =>{
+        return b.favorite - (a.favorite)
+    })
+    
     data.forEach(function(data){
         createQuestion(data);
     });
@@ -149,16 +153,12 @@ function createQuestion(container){
         head.setAttribute('name','text');
         bod.setAttribute('name','text');
         fav.setAttribute('type','checkbox');
-        fav.setAttribute('id','fav');
-        fav.setAttribute('on','false');
         if(container.favorite)
-            fav.setAttribute('on','true');
-
+            fav.setAttribute('checked','checked');
         head.innerHTML = container.sub;
         bod.innerHTML = container.ques;
         up.innerHTML = container.upvote;
         down.innerHTML = container.downvote;
-        fav.innerHTML = 'fav';
         box.setAttribute("id","box");
         up.setAttribute("class","dispupvote");
         down.setAttribute("class","dispdownvote");
@@ -170,6 +170,20 @@ function createQuestion(container){
         box.setAttribute('key',container.id)
         datalist.appendChild(box);
         box.addEventListener('click',displayDetails(container));
+        fav.addEventListener('click', addtoFav(container))
+}
+function addtoFav(container){
+    return ()=>{
+        container.favorite = !container.favorite;
+        console.log(container.favorite)
+        var arr = getFromLocalStorage();
+        arr.forEach((data) => {
+            if(data.id == container.id){
+                data.favorite = container.favorite;
+            }
+        });
+        localStorage.setItem('data',JSON.stringify(arr));
+    }
 }
 function displayDetails(container){
     return ()=>{

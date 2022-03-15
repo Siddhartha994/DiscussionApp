@@ -192,6 +192,6 @@ color: white;
 padding: 6px;
 border-radius: 7px;
 }
-#fav input:checked{
-    color: red;
+#fav {
+    background-color: red;
 }
